@@ -4,8 +4,16 @@ import LessonTheory from './components/LessonTheory';
 import CodeEditor from './components/CodeEditor';
 import LivePreview from './components/LivePreview';
 import AssignmentPanel from './components/AssignmentPanel';
-import { tracks } from './data/curriculum';
+import { tracks as baseTracks } from './data/curriculum';
+import { extraChapters } from './data/curriculumExtra';
 import { assignments } from './data/assignments';
+
+// Merge extra chapters into base tracks
+const tracks = baseTracks.map(track => {
+  const extra = extraChapters[track.id];
+  if (!extra) return track;
+  return { ...track, chapters: [...track.chapters, ...extra] };
+});
 
 const firstTrack = tracks[0];
 const firstLesson = firstTrack.chapters[0].lessons[0];
