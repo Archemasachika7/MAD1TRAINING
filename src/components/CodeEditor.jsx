@@ -7,7 +7,7 @@ const LANG_LABELS = {
   sql: 'query.sql',
 };
 
-export default function CodeEditor({ code, setCode, language, onRun, isRunning }) {
+export default function CodeEditor({ code, setCode, language, onRun, isRunning, hideRunButton }) {
   return (
     <div className="flex-1 border-r border-white/10 flex flex-col bg-[#161b22] min-w-0">
       {/* Toolbar */}
@@ -22,7 +22,7 @@ export default function CodeEditor({ code, setCode, language, onRun, isRunning }
             {LANG_LABELS[language] || 'main.txt'}
           </span>
         </div>
-        {language !== 'html' && (
+        {!hideRunButton && language !== 'html' && (
           <button
             onClick={onRun}
             disabled={isRunning}
@@ -44,7 +44,7 @@ export default function CodeEditor({ code, setCode, language, onRun, isRunning }
         )}
         {language === 'html' && (
           <span className="text-xs text-gray-500 bg-white/5 px-2 py-1 rounded">
-            ⚡ Live preview
+            ⚡ Live
           </span>
         )}
       </div>
