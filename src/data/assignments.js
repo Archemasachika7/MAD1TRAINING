@@ -389,7 +389,227 @@ export const assignments = {
     starterCode: null,
   },
 
-  /* ── PDSA ── */
+  /* ── PDSA Visualizations ── */
+
+  "pdsa-viz-stack": {
+    title: "Trace 5 Push/Pop Operations",
+    task: "Use the Stack Visualizer to trace the following sequence of operations and record the state after each step: push(A), push(B), push(C), pop(), push(D), pop(), pop(). Write your trace in a <pre> block below the visualizer.",
+    requirements: [
+      "Open the playground and run the preloaded visualizer",
+      "Perform the 7 operations in order using the Push/Pop buttons",
+      "After each operation, note: stack contents (bottom→top), size, top element",
+      "Add a <pre> tag to the HTML showing your trace table",
+      "Confirm the final stack contains only [A] with size=1",
+    ],
+    expectedOutput: "A trace table showing 7 rows. Final state: stack=[A], size=1, top=A.",
+    hints: [
+      "Add this to the HTML body: <pre id='trace'></pre> and update it after each op using JavaScript.",
+      "After pop(), the top changes to the element that was second-from-top before the pop.",
+      "Final trace: push(A)=[A], push(B)=[A,B], push(C)=[A,B,C], pop()=[A,B], push(D)=[A,B,D], pop()=[A,B], pop()=[A].",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-viz-queue": {
+    title: "Simulate a Print Queue",
+    task: "Modify the Queue Visualizer to simulate a print queue: add 5 print jobs (Job1–Job5), then process them one by one. Add a 'Process Job' button that dequeues and displays 'Printing: <job>' in a status area.",
+    requirements: [
+      "5 print jobs enqueued on page load (Job1 through Job5)",
+      "A 'Process Job' button that dequeues one job",
+      "A status div that shows 'Printing: Job1' etc. after each dequeue",
+      "When the queue is empty, the status shows 'All jobs printed!'",
+      "Jobs are processed in FIFO order (Job1 first)",
+    ],
+    expectedOutput: "Clicking 'Process Job' 5 times prints Job1, Job2, ... Job5 in order. Queue empties from the front.",
+    hints: [
+      "Add to HTML: <button onclick='process()'>Process Job</button><div id='status'></div>",
+      "function process(){ if(!queue.length){document.getElementById('status').textContent='All jobs printed!';return;} var job=queue.shift(); document.getElementById('status').textContent='Printing: '+job; render(); }",
+      "Preload on page load: ['Job1','Job2','Job3','Job4','Job5'].forEach(j=>queue.push(j)); render();",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-viz-ll": {
+    title: "Build and Reverse a List Visually",
+    task: "Use the Linked List Visualizer to: (1) append 5 nodes (10→20→30→40→50), (2) add a Reverse button to the HTML that reverses the list in-place and re-renders, (3) verify the result shows 50→40→30→20→10.",
+    requirements: [
+      "5 nodes appended on page load: 10, 20, 30, 40, 50",
+      "A 'Reverse' button added to the controls",
+      "Clicking Reverse reverses the list array and calls render()",
+      "After reversing, head=50 and tail=10",
+      "The operation log shows 'reverse() called'",
+    ],
+    expectedOutput: "Initial: 10→20→30→40→50. After clicking Reverse: 50→40→30→20→10 with head=50, tail=10.",
+    hints: [
+      "Add to HTML controls: <button onclick='doReverse()'>Reverse</button>",
+      "function doReverse(){ list.reverse(); addLog('reverse()  len='+list.length); render(); }",
+      "list.reverse() is JavaScript's built-in array reverse — it mutates in place.",
+    ],
+    starterCode: null,
+  },
+
+  /* ── PDSA Coding Problems ── */
+
+  "pdsa-prob-reverse": {
+    title: "Extend: Reverse Words in a Sentence",
+    task: "Your reverse_string function reverses characters. Now build reverse_words(sentence) that reverses the ORDER of words (not characters within each word) using a stack. 'hello world' → 'world hello'.",
+    requirements: [
+      "Split sentence into words",
+      "Push each word onto a stack",
+      "Pop all words to build the reversed sentence",
+      "Preserve original spacing (single spaces between words)",
+      "Handle empty string and single word correctly",
+      "All 5 provided test cases must pass",
+    ],
+    expectedOutput: "reverse_words('hello world') = 'world hello'. reverse_words('a b c d') = 'd c b a'. reverse_words('') = ''.",
+    hints: [
+      "Split: words = sentence.split(). This handles multiple spaces automatically.",
+      "Push each word, then pop and join with ' '.join(...).",
+      "Single word: the stack has one item, popping gives the same word back.",
+    ],
+    starterCode: `class Stack:\n    def __init__(self): self._d = []\n    def push(self, x): self._d.append(x)\n    def pop(self): return self._d.pop()\n    def is_empty(self): return not self._d\n\n\ndef reverse_words(sentence):\n    """Reverse word order using a stack."""\n    stack = Stack()\n    # TODO: split, push each word, pop into result\n    pass\n\n\n# Test cases\ncases = [\n    ("hello world",       "world hello"),\n    ("a b c d",           "d c b a"),\n    ("the quick brown fox","fox brown quick the"),\n    ("single",            "single"),\n    ("",                  ""),\n]\nfor inp, expected in cases:\n    got = reverse_words(inp)\n    print("PASS" if got == expected else "FAIL", repr(inp), "->", repr(got))`,
+  },
+
+  "pdsa-prob-minstack": {
+    title: "Extend: Min Stack with get_max()",
+    task: "Extend your MinStack to also support get_max() in O(1) time. Add a parallel max_stack alongside the existing min_stack. All operations (push, pop, get_min, get_max) must remain O(1).",
+    requirements: [
+      "push(), pop(), top() work as before",
+      "get_min() returns current minimum in O(1)",
+      "get_max() returns current maximum in O(1)",
+      "Both min and max update correctly after every pop",
+      "Handle single-element and empty stack edge cases",
+      "All 6 test cases pass",
+    ],
+    expectedOutput: "After pushing 5,3,7,2,6: get_min()=2, get_max()=7. After popping 6 and 2: get_min()=3, get_max()=7.",
+    hints: [
+      "Add self._max = [] parallel to self._min = [].",
+      "On push: self._max.append(max(val, self._max[-1]) if self._max else val)",
+      "On pop: self._min.pop(); self._max.pop() — keep both in sync with the main stack.",
+    ],
+    starterCode: `class MinMaxStack:\n    def __init__(self):\n        self._stack = []\n        self._min   = []\n        self._max   = []   # NEW: parallel max tracker\n\n    def push(self, val):\n        self._stack.append(val)\n        # TODO: update _min and _max\n        pass\n\n    def pop(self):\n        self._min.pop()\n        self._max.pop()\n        return self._stack.pop()\n\n    def top(self):     return self._stack[-1] if self._stack else None\n    def get_min(self): return self._min[-1]   if self._min   else None\n    def get_max(self): return self._max[-1]   if self._max   else None\n\n\nms = MinMaxStack()\nfor v in [5, 3, 7, 2, 6]:\n    ms.push(v)\nprint("After pushing 5,3,7,2,6:")\nprint("  min:", ms.get_min(), " expected 2")\nprint("  max:", ms.get_max(), " expected 7")\nms.pop(); ms.pop()\nprint("After 2 pops:")\nprint("  min:", ms.get_min(), " expected 3")\nprint("  max:", ms.get_max(), " expected 7")`,
+  },
+
+  "pdsa-prob-postfix": {
+    title: "Extend: Infix to Postfix Converter",
+    task: "Build infix_to_postfix(expr) that converts an infix expression (e.g. '3 + 4 * 2') to postfix ('3 4 2 * +'). Use the Shunting Yard algorithm with a stack for operators. Then feed the result to your eval_postfix function to verify.",
+    requirements: [
+      "Handles operators: + - * / with correct precedence (* / > + -)",
+      "Handles parentheses ( ) to override precedence",
+      "Tokens are space-separated in the input",
+      "Output tokens are space-separated",
+      "eval_postfix(infix_to_postfix(expr)) gives correct numeric result",
+      "All 5 test cases pass",
+    ],
+    expectedOutput: "infix_to_postfix('3 + 4 * 2') = '3 4 2 * +'. infix_to_postfix('( 3 + 4 ) * 2') = '3 4 + 2 *'.",
+    hints: [
+      "Operator precedence: prec = {'+':1, '-':1, '*':2, '/':2}",
+      "Shunting Yard: for each token — if number: output. If op: while stack top has >= precedence, pop to output, then push op. If '(': push. If ')': pop to output until '('.",
+      "At end: pop remaining operators from stack to output.",
+    ],
+    starterCode: `def infix_to_postfix(expr):\n    """Shunting Yard algorithm."""\n    prec = {'+':1, '-':1, '*':2, '/':2}\n    output = []\n    stack  = []\n    for token in expr.split():\n        if token not in prec and token not in "()":  # operand\n            output.append(token)\n        elif token == '(':\n            stack.append(token)\n        elif token == ')':\n            while stack and stack[-1] != '(':\n                output.append(stack.pop())\n            stack.pop()  # remove '('\n        else:  # operator\n            # TODO: pop higher/equal precedence operators first\n            stack.append(token)\n    while stack:\n        output.append(stack.pop())\n    return ' '.join(output)\n\ndef eval_postfix(expr):\n    stack = []\n    for t in expr.split():\n        if t in '+-*/':\n            b,a = stack.pop(),stack.pop()\n            stack.append(a+b if t=='+' else a-b if t=='-' else a*b if t=='*' else a/b)\n        else: stack.append(float(t))\n    return stack[0]\n\ncases = [("3 + 4","7"),("3 + 4 * 2","11"),("( 3 + 4 ) * 2","14"),("10 - 2 * 3","4"),("( 1 + 2 ) * ( 3 + 4 )","21")]\nfor expr,expected in cases:\n    pf=infix_to_postfix(expr); result=eval_postfix(pf)\n    print("OK" if abs(result-float(expected))<1e-9 else "FAIL", repr(expr),"->",pf,"=",result)`,
+  },
+
+  "pdsa-prob-queue-stacks": {
+    title: "Extend: Queue with size() and peek()",
+    task: "Add size() and peek() methods to your QueueFromStacks class. size() returns the total number of elements across both stacks. peek() returns the front element without removing it. Then verify with the provided test cases.",
+    requirements: [
+      "size() returns correct count without pouring stacks",
+      "peek() returns front element in O(1) amortised (may trigger pour)",
+      "peek() on empty queue returns None (no exception)",
+      "size() on empty queue returns 0",
+      "All existing enqueue/dequeue tests still pass",
+    ],
+    expectedOutput: "After enqueue(1,2,3): size()=3, peek()=1. After dequeue(): size()=2, peek()=2.",
+    hints: [
+      "size(): return len(self.inbox._d) + len(self.outbox._d)",
+      "peek(): self._pour(); return self.outbox.peek() if not self.outbox.is_empty() else None",
+      "Don't add a separate counter — computing from the two stack sizes is correct and simple.",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-prob-ll-middle": {
+    title: "Extend: Return All Middle Elements",
+    task: "Write find_all_middles(head) that returns a list of the middle node(s). For odd-length lists, return [middle]. For even-length lists, return [first_middle, second_middle]. Use two calls to the fast/slow pointer (or one modified version).",
+    requirements: [
+      "Odd-length list [1,2,3,4,5] → [3]",
+      "Even-length list [1,2,3,4] → [2, 3]",
+      "Single element [42] → [42]",
+      "Two elements [1,2] → [1, 2]",
+      "Returns node DATA values, not node objects",
+      "Uses fast/slow pointer — no len() or list conversion allowed",
+    ],
+    expectedOutput: "[1,2,3,4,5] → [3]. [1,2,3,4] → [2,3]. [1,2] → [1,2]. [42] → [42].",
+    hints: [
+      "For even detection: keep a step_count. If even number of steps taken, slow is second middle; back up one to get first.",
+      "Simpler: run find_middle twice — once normally (gives second middle for even), once with fast starting at head.next (gives first middle).",
+      "Deduplicate: if both calls return the same node, list is odd-length.",
+    ],
+    starterCode: `class Node:\n    def __init__(self, d): self.data=d; self.next=None\n\ndef build(*vals):\n    if not vals: return None\n    h=Node(vals[0]); c=h\n    for v in vals[1:]: c.next=Node(v); c=c.next\n    return h\n\ndef find_middle(head, fast_start=None):\n    """Standard fast/slow. fast_start overrides fast's start position."""\n    slow = head\n    fast = fast_start if fast_start else head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n    return slow\n\ndef find_all_middles(head):\n    # TODO: return list of 1 or 2 middle node data values\n    pass\n\ncases = [([1,2,3,4,5],[3]),([1,2,3,4],[2,3]),([1,2],[1,2]),([42],[42]),([1,2,3],[2])]\nfor vals,exp in cases:\n    got=find_all_middles(build(*vals))\n    print("OK" if got==exp else "FAIL", vals,"->",got)`,
+  },
+
+  "pdsa-prob-ll-remove-nth": {
+    title: "Extend: Remove All Occurrences of a Value",
+    task: "Write remove_all(head, val) that removes EVERY node with data equal to val from the linked list. Unlike remove_nth, this targets by value, not position. Use the dummy-node trick to handle head deletions cleanly.",
+    requirements: [
+      "Removes all nodes with data == val",
+      "Works when multiple consecutive nodes match",
+      "Works when head node(s) match",
+      "Works when tail node matches",
+      "Empty list returns None",
+      "All 6 test cases pass",
+    ],
+    expectedOutput: "remove_all([1,2,3,2,4], 2) = [1,3,4]. remove_all([1,1,1], 1) = []. remove_all([1,2,3], 5) = [1,2,3].",
+    hints: [
+      "Use dummy node: dummy.next = head. Walk prev and curr together.",
+      "If curr.data == val: prev.next = curr.next (skip curr). Else: prev = curr. Always: curr = curr.next.",
+      "Return dummy.next — handles the case where all nodes were removed.",
+    ],
+    starterCode: `class Node:\n    def __init__(self, d): self.data=d; self.next=None\n\ndef build(*vals):\n    if not vals: return None\n    h=Node(vals[0]); c=h\n    for v in vals[1:]: c.next=Node(v); c=c.next\n    return h\n\ndef to_list(h):\n    r=[]\n    while h: r.append(h.data); h=h.next\n    return r\n\ndef remove_all(head, val):\n    """Remove every node with data == val.\"\"\"\n    dummy = Node(0); dummy.next = head\n    prev, curr = dummy, head\n    while curr:\n        if curr.data == val:\n            # TODO: skip curr\n            pass\n        else:\n            prev = curr\n        curr = curr.next\n    return dummy.next\n\ncases=[([1,2,3,2,4],2,[1,3,4]),([1,1,1],1,[]),([1,2,3],5,[1,2,3]),([2,2,2,2],2,[]),([1,2,3],1,[2,3]),([1,2,3],3,[1,2])]\nfor vals,v,exp in cases:\n    got=to_list(remove_all(build(*vals),v))\n    print("OK" if got==exp else "FAIL",vals,"remove",v,"->",got)`,
+  },
+
+  "pdsa-prob-ll-merge": {
+    title: "Extend: Merge K Sorted Lists",
+    task: "Extend your merge_sorted to merge K sorted linked lists into one sorted list. Use a divide-and-conquer approach: repeatedly merge pairs of lists until only one remains. This gives O(N log K) time.",
+    requirements: [
+      "merge_k_sorted(lists) accepts a Python list of head nodes",
+      "Returns a single merged sorted linked list",
+      "Uses your existing merge_sorted(a, b) as a helper",
+      "Handles empty list of lists → returns None",
+      "Handles lists containing None (empty linked lists)",
+      "All 4 test cases pass",
+    ],
+    expectedOutput: "merge_k_sorted([[1,4,7],[2,5,8],[3,6,9]]) = [1,2,3,4,5,6,7,8,9]. merge_k_sorted([[1],[2],[3]]) = [1,2,3].",
+    hints: [
+      "Divide and conquer: while len(lists) > 1: merge pairs into a new list, repeat.",
+      "pairs loop: for i in range(0, len(lists), 2): merged.append(merge_sorted(lists[i], lists[i+1] if i+1<len(lists) else None))",
+      "Base case: if not lists: return None.",
+    ],
+    starterCode: `class Node:\n    def __init__(self, d): self.data=d; self.next=None\n\ndef build(*vals):\n    if not vals: return None\n    h=Node(vals[0]); c=h\n    for v in vals[1:]: c.next=Node(v); c=c.next\n    return h\n\ndef to_list(h):\n    r=[]\n    while h: r.append(h.data); h=h.next\n    return r\n\ndef merge_sorted(a, b):\n    dummy=Node(0); curr=dummy\n    while a and b:\n        if a.data<=b.data: curr.next=a; a=a.next\n        else: curr.next=b; b=b.next\n        curr=curr.next\n    curr.next=a if a else b\n    return dummy.next\n\ndef merge_k_sorted(lists):\n    """Merge K sorted linked lists using divide and conquer."""\n    if not lists: return None\n    # TODO: repeatedly merge pairs until one list remains\n    pass\n\ncases=[\n    ([[1,4,7],[2,5,8],[3,6,9]], [1,2,3,4,5,6,7,8,9]),\n    ([[1],[2],[3]],              [1,2,3]),\n    ([[1,3,5],[2,4,6]],          [1,2,3,4,5,6]),\n    ([[]],                       []),\n]\nfor lsts,exp in cases:\n    heads=[build(*v) for v in lsts]\n    got=to_list(merge_k_sorted(heads))\n    print("OK" if got==exp else "FAIL",lsts,"->",got)`,
+  },
+
+  /* ── PDSA Theory Quiz ── */
+
+  "pdsa-theory-mcq": {
+    title: "Score 7/7 on the Theory Quiz",
+    task: "Complete the 7-question interactive theory quiz in the playground. After finishing, review every question you got wrong. For each wrong answer, write a one-sentence explanation of why the correct answer is right in a comment at the top of the HTML file.",
+    requirements: [
+      "Complete all 7 questions (no skipping)",
+      "For each wrong answer, add a comment <!-- Q<N>: explanation --> at the top of the HTML",
+      "Score at least 5/7 to pass",
+      "Be able to explain the fast/slow pointer trace (Question 7) step by step",
+      "Be able to explain why deque is faster than list for queues (Question 2)",
+    ],
+    expectedOutput: "Quiz shows your final score. If below 5/7, retry. Comments in the HTML show you understood the mistakes.",
+    hints: [
+      "Q2 hint: list.pop(0) shifts every remaining element left — Python lists are arrays internally.",
+      "Q4 hint: Trace slow and fast starting at node 1 for list [1,2,3,4,5]. Step1: slow=2 fast=3. Step2: slow=3 fast=5. fast.next=None, stop.",
+      "Q6 hint: Each element is pushed once (to inbox) and popped once (to outbox). Total: 2 constant-time ops per element = O(1) amortised.",
+    ],
+    starterCode: null,
+  },
+
 
   "pdsa-stack": {
     title: "Implement a Stack-Based Undo System",
