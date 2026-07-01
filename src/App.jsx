@@ -6,13 +6,15 @@ import LivePreview from './components/LivePreview';
 import AssignmentPanel from './components/AssignmentPanel';
 import { tracks as baseTracks } from './data/curriculum';
 import { extraChapters } from './data/curriculumExtra';
+import { pdsaExtraChapters } from './data/pdsaExtra';
 import { assignments } from './data/assignments';
 
 // Merge extra chapters into base tracks
 const tracks = baseTracks.map(track => {
-  const extra = extraChapters[track.id];
-  if (!extra) return track;
-  return { ...track, chapters: [...track.chapters, ...extra] };
+  const extra = extraChapters[track.id] || [];
+  const pdsa  = track.id === 'pdsa' ? pdsaExtraChapters : [];
+  const added = [...extra, ...pdsa];
+  return added.length ? { ...track, chapters: [...track.chapters, ...added] } : track;
 });
 
 const firstTrack = tracks[0];
