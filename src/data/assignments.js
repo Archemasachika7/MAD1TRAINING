@@ -389,6 +389,68 @@ export const assignments = {
     starterCode: null,
   },
 
+  /* ── PDSA ── */
+
+  "pdsa-stack": {
+    title: "Implement a Stack-Based Undo System",
+    task: "Build an Undo/Redo system for a simple text editor using two stacks. The editor supports type(text), undo(), and redo() operations. Undo reverts the last action; redo reapplies it.",
+    requirements: [
+      "Use your Stack class (no importing external stack libraries)",
+      "type(text) appends text to the current document and clears the redo stack",
+      "undo() moves the last action to the redo stack and reverts the document",
+      "redo() replays the last undone action",
+      "show() prints the current document state",
+      "Handle undo on empty history and redo on empty redo stack gracefully",
+    ],
+    expectedOutput: "After type('Hello'), type(' World'), undo(), show() prints 'Hello'. After redo(), show() prints 'Hello World'. Undoing past history prints a warning message.",
+    hints: [
+      "Maintain two stacks: undo_stack (history) and redo_stack. Each entry is the full document state before that action.",
+      "type(text): push current doc to undo_stack, clear redo_stack, update doc.",
+      "undo(): if undo_stack not empty, push current doc to redo_stack, pop from undo_stack to restore doc.",
+    ],
+    starterCode: `class Stack:\n    def __init__(self):\n        self._data = []\n    def push(self, item): self._data.append(item)\n    def pop(self):\n        if self.is_empty(): raise IndexError("empty stack")\n        return self._data.pop()\n    def peek(self): return self._data[-1] if not self.is_empty() else None\n    def is_empty(self): return len(self._data) == 0\n\nclass TextEditor:\n    def __init__(self):\n        self.doc = ""\n        self.undo_stack = Stack()\n        self.redo_stack = Stack()\n\n    def type(self, text):\n        # TODO: push current state, update doc, clear redo\n        pass\n\n    def undo(self):\n        # TODO: revert to previous state\n        pass\n\n    def redo(self):\n        # TODO: reapply last undone action\n        pass\n\n    def show(self):\n        print("Doc:", repr(self.doc))\n\n\neditor = TextEditor()\neditor.type("Hello")\neditor.type(" World")\neditor.show()          # 'Hello World'\neditor.undo()\neditor.show()          # 'Hello'\neditor.redo()\neditor.show()          # 'Hello World'\neditor.undo()\neditor.undo()\neditor.undo()          # should warn: nothing to undo`,
+  },
+
+  "pdsa-queue": {
+    title: "Task Scheduler with Priority Queue",
+    task: "Build a simple CPU task scheduler using a Queue for normal tasks and a second Queue for priority tasks. The scheduler always processes all priority tasks before any normal task. Simulate running 8 tasks with a mix of priorities.",
+    requirements: [
+      "Use your Queue class (backed by collections.deque)",
+      "add_task(name, priority) enqueues to priority_queue if priority='HIGH', else normal_queue",
+      "run_next() dequeues from priority_queue first; only uses normal_queue when priority is empty",
+      "run_all() runs until both queues are empty, printing each task as it runs",
+      "At least 3 HIGH and 3 NORMAL tasks in your demo",
+      "Output shows HIGH tasks all complete before NORMAL tasks start",
+    ],
+    expectedOutput: "run_all() prints tasks in order: all HIGH-priority tasks first (in FIFO order among themselves), then all NORMAL tasks. The last line prints 'All tasks complete.'",
+    hints: [
+      "Two queues: self.priority_q = Queue() and self.normal_q = Queue().",
+      "run_next(): if not self.priority_q.is_empty(): run self.priority_q.dequeue(), else run self.normal_q.dequeue()",
+      "run_all(): loop while not (priority_q.is_empty() and normal_q.is_empty()): self.run_next()",
+    ],
+    starterCode: `from collections import deque\n\nclass Queue:\n    def __init__(self):\n        self._data = deque()\n    def enqueue(self, item): self._data.append(item)\n    def dequeue(self):\n        if self.is_empty(): raise IndexError("empty queue")\n        return self._data.popleft()\n    def is_empty(self): return len(self._data) == 0\n\nclass Scheduler:\n    def __init__(self):\n        self.priority_q = Queue()\n        self.normal_q   = Queue()\n\n    def add_task(self, name, priority="NORMAL"):\n        # TODO: route to correct queue\n        pass\n\n    def run_next(self):\n        # TODO: run priority first, then normal\n        pass\n\n    def run_all(self):\n        # TODO: drain both queues\n        pass\n\n\nsched = Scheduler()\nsched.add_task("Render UI",      "NORMAL")\nsched.add_task("Security Scan",  "HIGH")\nsched.add_task("Send Email",     "NORMAL")\nsched.add_task("Auth Check",     "HIGH")\nsched.add_task("Cache Warm",     "NORMAL")\nsched.add_task("DB Backup",      "HIGH")\nsched.add_task("Analytics",      "NORMAL")\nsched.run_all()`,
+  },
+
+  "pdsa-linked-list": {
+    title: "Detect and Remove a Loop in a Linked List",
+    task: "Implement Floyd's Cycle Detection algorithm to detect if a linked list has a loop, find the start of the loop, and remove it. Then verify the fixed list prints correctly.",
+    requirements: [
+      "has_loop() returns True if the list contains a cycle, False otherwise",
+      "Uses Floyd's two-pointer (slow/fast) algorithm — no extra data structures",
+      "find_loop_start() returns the node where the cycle begins (or None)",
+      "remove_loop() detects and removes the cycle, leaving a valid linear list",
+      "Demo: create a list [1→2→3→4→5], manually create a loop (5.next = node at 2), then detect, find, and remove",
+      "After remove_loop(), display() prints the list without crashing",
+    ],
+    expectedOutput: "has_loop() returns True on the looped list. find_loop_start() returns the node with data=2. After remove_loop(), display() prints '1 → 2 → 3 → 4 → 5 → None'.",
+    hints: [
+      "Floyd's: slow moves 1 step, fast moves 2 steps. If they meet, there's a loop.",
+      "To find loop start: after meeting, reset one pointer to head. Move both one step at a time — they meet at the loop start.",
+      "To remove: find the last node in the cycle (walk from loop_start until node.next == loop_start), set that node.next = None.",
+    ],
+    starterCode: `class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass LinkedList:\n    def __init__(self):\n        self.head = None\n\n    def append(self, data):\n        new = Node(data)\n        if not self.head:\n            self.head = new; return\n        curr = self.head\n        while curr.next: curr = curr.next\n        curr.next = new\n\n    def display(self):\n        nodes, curr = [], self.head\n        while curr:\n            nodes.append(str(curr.data))\n            curr = curr.next\n        print(" → ".join(nodes) + " → None")\n\n    def has_loop(self):\n        # TODO: Floyd's slow/fast pointer\n        pass\n\n    def find_loop_start(self):\n        # TODO: reset one pointer to head after meeting point\n        pass\n\n    def remove_loop(self):\n        # TODO: find last node in cycle, set .next = None\n        pass\n\n\n# Build list: 1 → 2 → 3 → 4 → 5\nll = LinkedList()\nfor v in [1, 2, 3, 4, 5]:\n    ll.append(v)\n\n# Create loop: 5.next → node(2)\nnodes = []\ncurr = ll.head\nwhile curr:\n    nodes.append(curr)\n    curr = curr.next\nnodes[-1].next = nodes[1]   # 5 → 2 (loop!)\n\nprint("Has loop:", ll.has_loop())\nstart = ll.find_loop_start()\nprint("Loop starts at node:", start.data if start else None)\nll.remove_loop()\nprint("After remove:")\nll.display()`,
+  },
+
   /* ── CSS Styling ── */
 
   "css-box-model": {
