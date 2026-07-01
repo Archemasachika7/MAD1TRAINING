@@ -682,7 +682,150 @@ export const tracks = [
         ]
       }
     ]
-  }
+  },
+  /* ──────────────────────────────────────────────────────── PDSA ── */
+  {
+    id: "pdsa",
+    name: "PDSA",
+    icon: "🧩",
+    color: "teal",
+    chapters: [
+      {
+        id: "pdsa-linear",
+        title: "Linear Data Structures",
+        lessons: [
+          {
+            id: "pdsa-stack",
+            title: "Stack",
+            language: "python",
+            theory: {
+              intro: "A Stack is a linear data structure that follows the LIFO principle — Last In, First Out. Think of a stack of plates: you can only add or remove from the top. Stacks power undo/redo, browser history, function call management, and expression evaluation.",
+              sections: [
+                {
+                  heading: "Core Operations",
+                  content: "A stack needs exactly four operations. Everything else is built on these.",
+                  code: `class Stack:\n    def __init__(self):\n        self._data = []          # internal list\n\n    def push(self, item):       # add to top\n        self._data.append(item)\n\n    def pop(self):              # remove from top\n        if self.is_empty():\n            raise IndexError("pop from empty stack")\n        return self._data.pop()\n\n    def peek(self):             # look at top without removing\n        if self.is_empty():\n            raise IndexError("peek from empty stack")\n        return self._data[-1]\n\n    def is_empty(self):\n        return len(self._data) == 0\n\n    def size(self):\n        return len(self._data)`,
+                  breakdown: [
+                    { line: "self._data = []", explanation: "We back the stack with a Python list. The END of the list is the top of the stack." },
+                    { line: "push → append()", explanation: "list.append() adds to the end (our top) in O(1) amortised time." },
+                    { line: "pop → list.pop()", explanation: "list.pop() removes the last element — O(1). Raises IndexError on empty stack." },
+                    { line: "peek → self._data[-1]", explanation: "Negative index −1 reads the last element without removing it." },
+                    { line: "is_empty", explanation: "Always guard pop/peek with is_empty to avoid crashes on an empty stack." },
+                  ]
+                },
+                {
+                  heading: "Balanced Parentheses — Classic Stack Problem",
+                  content: "Given a string of brackets, check if every opening bracket has a matching closing bracket in the right order. This is the canonical interview problem for stacks.",
+                  code: `def is_balanced(s):\n    stack = Stack()\n    pairs = {')': '(', ']': '[', '}': '{'}\n\n    for ch in s:\n        if ch in '([{':\n            stack.push(ch)\n        elif ch in ')]}':\n            if stack.is_empty() or stack.pop() != pairs[ch]:\n                return False\n    return stack.is_empty()\n\nprint(is_balanced("({[]})"))   # True\nprint(is_balanced("([)]"))     # False\nprint(is_balanced("{"))        # False`,
+                  breakdown: [
+                    { line: "pairs = {')': '(',...}", explanation: "Maps each closing bracket to its expected opening pair." },
+                    { line: "stack.push(ch)", explanation: "When we see an opener, push it — we expect a matching closer later." },
+                    { line: "stack.pop() != pairs[ch]", explanation: "When we see a closer, pop the top and check it matches. If not — unbalanced." },
+                    { line: "return stack.is_empty()", explanation: "After scanning all chars, the stack must be empty (all openers were closed)." },
+                  ]
+                },
+                {
+                  heading: "Time & Space Complexity",
+                  content: "All stack operations are constant time when backed by a Python list.",
+                  code: `# Operation  | Time  | Reason\n# -----------|-------|--------------------------------\n# push()     | O(1)  | list.append() amortised O(1)\n# pop()      | O(1)  | list.pop() from end\n# peek()     | O(1)  | index into last element\n# is_empty() | O(1)  | len() is O(1)\n# size()     | O(1)  | len() is O(1)\n#\n# Space: O(n) where n = number of elements`,
+                  breakdown: []
+                }
+              ],
+              tip: "Python's built-in list already works as a stack (append/pop). Writing a class around it adds clarity and enforces the LIFO contract — no random access."
+            },
+            defaultCode: `class Stack:\n    def __init__(self):\n        self._data = []\n\n    def push(self, item):\n        self._data.append(item)\n\n    def pop(self):\n        if self.is_empty():\n            raise IndexError("pop from empty stack")\n        return self._data.pop()\n\n    def peek(self):\n        if self.is_empty():\n            raise IndexError("peek from empty stack")\n        return self._data[-1]\n\n    def is_empty(self):\n        return len(self._data) == 0\n\n    def size(self):\n        return len(self._data)\n\n    def __repr__(self):\n        return f"Stack({self._data} <- top)"\n\n\n# ── Demo ──\ns = Stack()\nfor val in [10, 20, 30, 40]:\n    s.push(val)\nprint("After pushes:", s)\nprint("Peek:", s.peek())\nprint("Pop:", s.pop())\nprint("After pop:", s)\nprint("Size:", s.size())\n\n# Balanced parentheses\ndef is_balanced(expr):\n    stack = Stack()\n    pairs = {')': '(', ']': '[', '}': '{'}\n    for ch in expr:\n        if ch in '([{':\n            stack.push(ch)\n        elif ch in ')]}':  \n            if stack.is_empty() or stack.pop() != pairs[ch]:\n                return False\n    return stack.is_empty()\n\nprint("\\nBalanced checks:")\nfor expr in ["({[]})", "([)]", "{[}"]:\n    print(f"  {expr!r:10s} → {is_balanced(expr)}")`
+          },
+          {
+            id: "pdsa-queue",
+            title: "Queue",
+            language: "python",
+            theory: {
+              intro: "A Queue is a linear data structure that follows the FIFO principle — First In, First Out. Like a real-world queue at a ticket counter: the person who arrives first gets served first. Queues power CPU scheduling, print spooling, BFS graph traversal, and message brokers.",
+              sections: [
+                {
+                  heading: "Core Operations",
+                  content: "A queue adds at the rear and removes from the front. Using collections.deque gives O(1) on both ends — a plain list would give O(n) dequeues.",
+                  code: `from collections import deque\n\nclass Queue:\n    def __init__(self):\n        self._data = deque()     # double-ended queue\n\n    def enqueue(self, item):    # add to rear\n        self._data.append(item)\n\n    def dequeue(self):          # remove from front\n        if self.is_empty():\n            raise IndexError("dequeue from empty queue")\n        return self._data.popleft()\n\n    def front(self):            # peek at front\n        if self.is_empty():\n            raise IndexError("front of empty queue")\n        return self._data[0]\n\n    def is_empty(self):\n        return len(self._data) == 0\n\n    def size(self):\n        return len(self._data)`,
+                  breakdown: [
+                    { line: "from collections import deque", explanation: "deque (double-ended queue) supports O(1) append at right and popleft at left — unlike list which is O(n) for popleft." },
+                    { line: "enqueue → append()", explanation: "Adds to the right (rear). O(1)." },
+                    { line: "dequeue → popleft()", explanation: "Removes from the left (front). O(1) with deque, O(n) with plain list." },
+                    { line: "front → self._data[0]", explanation: "Peeks at the front element without removing it." },
+                  ]
+                },
+                {
+                  heading: "BFS with a Queue",
+                  content: "Breadth-First Search (BFS) explores a graph level by level. The queue guarantees we visit nearer nodes before farther ones.",
+                  code: `from collections import deque\n\ndef bfs(graph, start):\n    visited = set()\n    queue = deque([start])\n    order = []\n\n    while queue:\n        node = queue.popleft()        # process front node\n        if node in visited:\n            continue\n        visited.add(node)\n        order.append(node)\n        for neighbour in graph[node]:  # add unvisited neighbours\n            if neighbour not in visited:\n                queue.append(neighbour)\n\n    return order\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [], 'E': [], 'F': []\n}\nprint(bfs(graph, 'A'))  # ['A', 'B', 'C', 'D', 'E', 'F']`,
+                  breakdown: [
+                    { line: "queue = deque([start])", explanation: "Initialise queue with the starting node." },
+                    { line: "node = queue.popleft()", explanation: "Always process the oldest (front) node first — guarantees level-by-level order." },
+                    { line: "visited.add(node)", explanation: "Mark visited to avoid infinite loops in cyclic graphs." },
+                    { line: "queue.append(neighbour)", explanation: "Add unvisited neighbours to the rear for future processing." },
+                  ]
+                },
+                {
+                  heading: "Circular Queue",
+                  content: "A fixed-size circular queue reuses freed slots using modular arithmetic. Used in embedded systems and ring buffers where memory is limited.",
+                  code: `class CircularQueue:\n    def __init__(self, capacity):\n        self._buf  = [None] * capacity\n        self._cap  = capacity\n        self._head = 0     # front pointer\n        self._tail = 0     # rear pointer\n        self._size = 0\n\n    def enqueue(self, item):\n        if self._size == self._cap:\n            raise OverflowError("Queue full")\n        self._buf[self._tail] = item\n        self._tail = (self._tail + 1) % self._cap\n        self._size += 1\n\n    def dequeue(self):\n        if self._size == 0:\n            raise IndexError("Queue empty")\n        item = self._buf[self._head]\n        self._head = (self._head + 1) % self._cap\n        self._size -= 1\n        return item`,
+                  breakdown: [
+                    { line: "(self._tail + 1) % self._cap", explanation: "Modulo wraps the pointer back to 0 when it reaches the end — making the buffer circular." },
+                    { line: "self._size == self._cap", explanation: "Full check. Without size tracking, head==tail is ambiguous (could mean full OR empty)." },
+                  ]
+                }
+              ],
+              tip: "Always use collections.deque for queue implementations in Python. list.pop(0) is O(n) because it shifts every element left."
+            },
+            defaultCode: `from collections import deque\n\nclass Queue:\n    def __init__(self):\n        self._data = deque()\n\n    def enqueue(self, item):\n        self._data.append(item)\n\n    def dequeue(self):\n        if self.is_empty():\n            raise IndexError("dequeue from empty queue")\n        return self._data.popleft()\n\n    def front(self):\n        if self.is_empty():\n            raise IndexError("front of empty queue")\n        return self._data[0]\n\n    def is_empty(self):\n        return len(self._data) == 0\n\n    def size(self):\n        return len(self._data)\n\n    def __repr__(self):\n        return "Queue(front -> " + " -> ".join(str(x) for x in self._data) + " <- rear)"\n\n\n# ── Demo ──\nq = Queue()\nfor item in ["Alice", "Bob", "Carol", "Dave"]:\n    q.enqueue(item)\nprint("Queue:", q)\nprint("Front:", q.front())\nprint("Dequeue:", q.dequeue())\nprint("After dequeue:", q)\nprint("Size:", q.size())\n\n# BFS demo\ndef bfs(graph, start):\n    visited = set()\n    queue = deque([start])\n    order = []\n    while queue:\n        node = queue.popleft()\n        if node in visited:\n            continue\n        visited.add(node)\n        order.append(node)\n        for nb in graph[node]:\n            if nb not in visited:\n                queue.append(nb)\n    return order\n\ngraph = {'A': ['B','C'], 'B': ['D','E'], 'C': ['F'], 'D': [], 'E': [], 'F': []}\nprint("\\nBFS from A:", bfs(graph, 'A'))`
+          },
+          {
+            id: "pdsa-linked-list",
+            title: "Linked List",
+            language: "python",
+            theory: {
+              intro: "A Linked List is a chain of nodes where each node holds data and a pointer to the next node. Unlike arrays, nodes are scattered in memory — there is no indexing, but insertion and deletion at any point is O(1) if you already have the pointer. It is the foundation for stacks, queues, and many other structures.",
+              sections: [
+                {
+                  heading: "Node and SinglyLinkedList",
+                  content: "Two classes: Node (holds data + next pointer) and LinkedList (holds the head pointer and all operations).",
+                  code: `class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None   # pointer to next node\n\nclass SinglyLinkedList:\n    def __init__(self):\n        self.head = None   # empty list\n\n    # Add to end — O(n)\n    def append(self, data):\n        new = Node(data)\n        if self.head is None:\n            self.head = new\n            return\n        curr = self.head\n        while curr.next:     # walk to last node\n            curr = curr.next\n        curr.next = new      # link last → new\n\n    # Add to front — O(1)\n    def prepend(self, data):\n        new = Node(data)\n        new.next = self.head\n        self.head = new\n\n    # Print all nodes\n    def display(self):\n        nodes = []\n        curr = self.head\n        while curr:\n            nodes.append(str(curr.data))\n            curr = curr.next\n        print(" → ".join(nodes) + " → None")`,
+                  breakdown: [
+                    { line: "self.next = None", explanation: "None is the sentinel that marks the end of the list." },
+                    { line: "self.head = None", explanation: "An empty list has no head node." },
+                    { line: "while curr.next", explanation: "Walk until we find the last node (its next is None)." },
+                    { line: "curr.next = new", explanation: "Link the old last node to the new node." },
+                    { line: "new.next = self.head", explanation: "prepend: new node points to old head, then becomes the new head. O(1)." },
+                  ]
+                },
+                {
+                  heading: "Search and Delete",
+                  content: "Search scans linearly — O(n). Deletion requires finding the node BEFORE the target so we can relink around it.",
+                  code: `def search(self, target):\n    curr = self.head\n    pos = 0\n    while curr:\n        if curr.data == target:\n            return pos         # found at position pos\n        curr = curr.next\n        pos += 1\n    return -1                  # not found\n\ndef delete(self, target):\n    if self.head is None:\n        return\n    # Target is the head\n    if self.head.data == target:\n        self.head = self.head.next\n        return\n    # Find the node BEFORE target\n    prev = self.head\n    while prev.next and prev.next.data != target:\n        prev = prev.next\n    if prev.next:              # target found\n        prev.next = prev.next.next   # skip over target`,
+                  breakdown: [
+                    { line: "curr = curr.next", explanation: "Advance the pointer one node at a time — this is how you traverse a linked list." },
+                    { line: "self.head = self.head.next", explanation: "Delete head: make head point to the second node. Old head is garbage-collected." },
+                    { line: "prev.next = prev.next.next", explanation: "Delete a middle/tail node: bypass it by linking prev directly to the node after target." },
+                  ]
+                },
+                {
+                  heading: "Reverse a Linked List",
+                  content: "Reversing in-place uses three pointers: prev, curr, and next_node. This is the most common linked list interview question.",
+                  code: `def reverse(self):\n    prev = None\n    curr = self.head\n    while curr:\n        next_node   = curr.next  # save next\n        curr.next   = prev       # flip pointer\n        prev        = curr       # advance prev\n        curr        = next_node  # advance curr\n    self.head = prev             # new head`,
+                  breakdown: [
+                    { line: "next_node = curr.next", explanation: "Save the next node before overwriting curr.next (otherwise we lose the rest of the list)." },
+                    { line: "curr.next = prev", explanation: "Flip the pointer: instead of pointing forward, point backward." },
+                    { line: "self.head = prev", explanation: "After the loop, prev sits on the old tail — which is now the new head." },
+                  ]
+                }
+              ],
+              tip: "Draw the pointer arrows on paper before coding. Linked list bugs almost always come from losing a reference — save next_node before you modify curr.next."
+            },
+            defaultCode: `class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\nclass SinglyLinkedList:\n    def __init__(self):\n        self.head = None\n\n    def append(self, data):\n        new = Node(data)\n        if not self.head:\n            self.head = new; return\n        curr = self.head\n        while curr.next:\n            curr = curr.next\n        curr.next = new\n\n    def prepend(self, data):\n        new = Node(data)\n        new.next = self.head\n        self.head = new\n\n    def delete(self, target):\n        if not self.head: return\n        if self.head.data == target:\n            self.head = self.head.next; return\n        prev = self.head\n        while prev.next and prev.next.data != target:\n            prev = prev.next\n        if prev.next:\n            prev.next = prev.next.next\n\n    def reverse(self):\n        prev, curr = None, self.head\n        while curr:\n            nxt = curr.next\n            curr.next = prev\n            prev, curr = curr, nxt\n        self.head = prev\n\n    def to_list(self):\n        result, curr = [], self.head\n        while curr:\n            result.append(curr.data)\n            curr = curr.next\n        return result\n\n    def display(self, label=""):\n        print((label + ": " if label else "") + " → ".join(str(x) for x in self.to_list()) + " → None")\n\n\n# ── Demo ──\nll = SinglyLinkedList()\nfor v in [10, 20, 30, 40, 50]:\n    ll.append(v)\nll.display("Initial")\n\nll.prepend(5)\nll.display("After prepend 5")\n\nll.delete(30)\nll.display("After delete 30")\n\nll.reverse()\nll.display("After reverse")\n\nprint("As list:", ll.to_list())`
+          }
+        ]
+      }
+    ]
+  },
 ];
 
 export const getAllLessons = () =>

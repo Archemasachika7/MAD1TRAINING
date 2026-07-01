@@ -7,6 +7,7 @@ const TRACK_BADGE_COLORS = {
   flask:     'bg-yellow-500/20 text-yellow-300',
   sqlite:    'bg-blue-500/20 text-blue-300',
   projects:  'bg-pink-500/20 text-pink-300',
+  pdsa:      'bg-teal-500/20 text-teal-300',
 };
 
 function CodeBlock({ code }) {
