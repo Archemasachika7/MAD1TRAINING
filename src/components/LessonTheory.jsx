@@ -66,7 +66,7 @@ function BreakdownTable({ items }) {
 
 export default function LessonTheory({
   lesson, trackId, onMarkComplete, isCompleted,
-  panelMode, onTogglePlayground, onToggleAssignment, hasAssignment
+  panelMode, onTogglePlayground, onToggleAssignment, hasAssignment, vizMode
 }) {
   if (!lesson) return null;
   const { theory } = lesson;
@@ -125,7 +125,15 @@ export default function LessonTheory({
         </div>
       </div>
 
-      {/* Action bar — always at the bottom of theory */}
+      {/* Viz lessons: the interactive demo renders below — no coding panel */}
+      {vizMode && (
+        <div className="flex-shrink-0 border-t border-white/10 bg-[#161b22] px-4 py-2.5 flex items-center">
+          <span className="text-xs text-teal-300/80">🧩 Interactive demo below — play with it, no coding needed here</span>
+        </div>
+      )}
+
+      {/* Action bar — bottom of theory */}
+      {!vizMode && (
       <div className="flex-shrink-0 border-t border-white/10 bg-[#161b22] px-4 py-2.5 flex items-center gap-2">
         <span className="text-xs text-gray-600 mr-auto">Ready to practice?</span>
 
@@ -153,6 +161,7 @@ export default function LessonTheory({
           </button>
         )}
       </div>
+      )}
     </div>
   );
 }
