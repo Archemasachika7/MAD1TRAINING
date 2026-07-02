@@ -130,7 +130,7 @@ export default function App() {
   const panelOpen = panelMode !== null;
 
   return (
-    <div className="flex h-screen bg-[#0d1117] text-gray-200 font-sans overflow-hidden">
+    <div className="flex h-screen arena-bg text-gray-200 font-sans overflow-hidden">
       <Sidebar
         section={section}
         onSectionChange={handleSectionChange}
@@ -157,7 +157,7 @@ export default function App() {
         {/* ── Visualizer lesson: theory + always-on interactive demo ── */}
         {!currentProblem && isVizLesson && (
           <>
-            <div className="flex flex-col min-h-0 flex-[0_0_38%]">
+            <div className="flex flex-col min-h-0 flex-[0_0_35%]">
               <LessonTheory
                 lesson={currentLesson}
                 trackId={currentTrackId}
@@ -166,7 +166,12 @@ export default function App() {
                 vizMode
               />
             </div>
-            <div className="flex flex-1 min-h-0 border-t border-white/10">
+            <div className="flex flex-1 min-h-0 border-t border-white/10 relative">
+              <div className="absolute top-3 left-4 z-10">
+                <span className="text-xs font-bold text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1.5 rounded-lg backdrop-blur-sm">
+                  🎮 Interactive Visualizer — Experiment Freely
+                </span>
+              </div>
               <LivePreview code={currentLesson.defaultCode} language="html" runSignal={0} />
             </div>
           </>
@@ -175,7 +180,7 @@ export default function App() {
         {/* ── Regular lesson view ── */}
         {!currentProblem && !isVizLesson && (
           <>
-            <div className={`flex flex-col min-h-0 transition-all duration-300 ${panelOpen ? 'flex-[0_0_45%]' : 'flex-1'}`}>
+            <div className={`flex flex-col min-h-0 transition-all duration-300 ${panelOpen ? 'flex-[0_0_42%]' : 'flex-1'}`}>
               <LessonTheory
                 lesson={currentLesson}
                 trackId={currentTrackId}
@@ -190,29 +195,29 @@ export default function App() {
 
             {/* Bottom panel — editor + preview OR assignment */}
             {panelOpen && (
-              <div className="flex flex-col flex-1 min-h-0 border-t border-white/10">
+              <div className="flex flex-col flex-1 min-h-0 border-t border-white/10 editor-glow">
                 {/* Tab bar */}
-                <div className="flex items-center bg-[#161b22] border-b border-white/10 flex-shrink-0">
+                <div className="flex items-center bg-[#0f141f] border-b border-white/10 flex-shrink-0 px-2">
                   <button
                     onClick={() => setPanelMode('playground')}
-                    className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-all ${
+                    className={`flex items-center gap-2 px-5 py-3 text-xs font-bold border-b-2 transition-all ${
                       panelMode === 'playground'
-                        ? 'border-blue-400 text-blue-300'
-                        : 'border-transparent text-gray-500 hover:text-gray-300'
+                        ? 'border-blue-400 text-blue-300 bg-blue-500/10'
+                        : 'border-transparent text-gray-500 hover:text-gray-300 hover:bg-white/3'
                     }`}
                   >
-                    ⚡ Playground
+                    <span>⚡ Playground</span>
                   </button>
                   {currentAssignment && (
                     <button
                       onClick={() => setPanelMode('assignment')}
-                      className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-all ${
+                      className={`flex items-center gap-2 px-5 py-3 text-xs font-bold border-b-2 transition-all ${
                         panelMode === 'assignment'
-                          ? 'border-purple-400 text-purple-300'
-                          : 'border-transparent text-gray-500 hover:text-gray-300'
+                          ? 'border-purple-400 text-purple-300 bg-purple-500/10'
+                          : 'border-transparent text-gray-500 hover:text-gray-300 hover:bg-white/3'
                       }`}
                     >
-                      📝 Assignment
+                      <span>📝 Assignment</span>
                     </button>
                   )}
                   <div className="flex-1" />
@@ -220,23 +225,26 @@ export default function App() {
                     <button
                       onClick={handleRun}
                       disabled={isRunning}
-                      className={`flex items-center gap-1.5 text-xs mr-3 px-3 py-1.5 rounded-md font-semibold transition-all ${
+                      className={`flex items-center gap-2 text-xs mr-2 px-4 py-2 rounded-lg font-bold transition-all ${
                         isRunning
                           ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                          : 'bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white shadow-lg shadow-emerald-500/30'
                       }`}
                     >
                       {isRunning
-                        ? <><span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />Running...</>
-                        : '▶ Run'}
+                        ? <><span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />Running...</>
+                        : <><span>▶</span> Run Code</>}
                     </button>
                   )}
                   {panelMode === 'playground' && currentLesson.language === 'html' && (
-                    <span className="text-xs text-gray-600 mr-3">⚡ live</span>
+                    <span className="text-xs font-bold text-emerald-400 mr-3 flex items-center gap-1.5">
+                      <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                      Live Preview Active
+                    </span>
                   )}
                   <button
                     onClick={() => setPanelMode(null)}
-                    className="text-gray-500 hover:text-white text-lg px-3 transition-colors"
+                    className="text-gray-500 hover:text-white text-xl px-3 transition-colors"
                     title="Close panel"
                   >
                     ×
@@ -295,21 +303,21 @@ export default function App() {
 
         {/* Bottom nav (lessons only) */}
         {!currentProblem && (
-          <div className="flex items-center justify-between px-4 py-2 border-t border-white/10 bg-[#161b22] flex-shrink-0">
+          <div className="flex items-center justify-between px-5 py-3 border-t border-white/10 bg-[#0f141f] flex-shrink-0">
             <button
               onClick={() => prevLesson && handleLessonChange(prevLesson, prevLesson.trackId)}
               disabled={!prevLesson}
-              className="text-xs text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="text-xs font-medium text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
-              ← {prevLesson?.title || 'Start'}
+              <span className="text-lg">←</span> {prevLesson?.title || 'Start'}
             </button>
-            <span className="text-xs text-gray-600">{currentIndex + 1} / {allLessons.length}</span>
+            <span className="text-xs font-mono text-gray-500 bg-white/5 px-3 py-1 rounded">{currentIndex + 1} / {allLessons.length}</span>
             <button
               onClick={() => nextLesson && handleLessonChange(nextLesson, nextLesson.trackId)}
               disabled={!nextLesson}
-              className="text-xs text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="text-xs font-medium text-gray-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
-              {nextLesson?.title || 'End'} →
+              {nextLesson?.title || 'End'} <span className="text-lg">→</span>
             </button>
           </div>
         )}
