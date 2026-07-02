@@ -1381,4 +1381,210 @@ SELECT /* your query */;`,
     ],
     starterCode: null,
   },
+
+  /* ── PDSA Advanced: Arrays / Deque / Heap / BST ── */
+
+  "pdsa-arrays": {
+    title: "Rotate an Array In Place",
+    task: "Implement rotate_right(arr, k) that rotates an array k positions to the right in O(n) time and O(1) extra space using the triple-reversal trick: reverse the whole array, then reverse the first k elements, then reverse the rest.",
+    requirements: [
+      "Reuse the two-pointer reverse_in_place from the lesson (accept a start and end index)",
+      "rotate_right([1,2,3,4,5], 2) must return [4,5,1,2,3]",
+      "Handle k larger than len(arr) using k % len(arr)",
+      "Handle empty arrays and k = 0 without crashing",
+      "No second array allowed — O(1) extra space",
+      "Include at least 5 test cases with expected values printed as PASS/FAIL",
+    ],
+    expectedOutput: "All test cases print PASS, including k > n and empty-array edge cases.",
+    hints: [
+      "Triple reversal of [1,2,3,4,5] with k=2: reverse all -> [5,4,3,2,1]; reverse first 2 -> [4,5,3,2,1]; reverse rest -> [4,5,1,2,3].",
+      "Generalise reverse: def reverse(a, lo, hi): while lo < hi: a[lo], a[hi] = a[hi], a[lo]; lo += 1; hi -= 1",
+      "Guard first: if not arr: return arr, then k %= len(arr).",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-deque": {
+    title: "Browser History with a Bounded Deque",
+    task: "Build a BrowserHistory class using collections.deque: visit(url) records a page, back() and forward() navigate, and the history keeps only the most recent 5 pages (older ones are silently discarded).",
+    requirements: [
+      "Use deque(maxlen=5) for the history storage",
+      "visit(url) adds a page and clears any forward pages (like a real browser)",
+      "back() moves one step back and returns the current page; at the oldest page it stays put",
+      "forward() moves one step forward; at the newest page it stays put",
+      "current() returns the page you're on",
+      "Demonstrate the maxlen behaviour: visit 7 pages, show only the last 5 survive",
+    ],
+    expectedOutput: "A printed session showing visits, back/back/forward navigation, and proof that visiting a 6th and 7th page dropped the oldest ones.",
+    hints: [
+      "Track position with an index into the deque rather than popping — back() just decrements the index.",
+      "visit() while not at the end must first delete everything after the current index (the forward pages).",
+      "After a deque at maxlen drops an old page, your index shifts by one — adjust it or recompute from len().",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-heap": {
+    title: "Running Median with Two Heaps",
+    task: "Implement a MedianFinder that returns the median of all numbers seen so far after each insertion, using two heaps: a max-heap for the lower half and a min-heap for the upper half.",
+    requirements: [
+      "Use heapq for both heaps (negate values for the max-heap)",
+      "add(num) keeps the heaps balanced: sizes differ by at most 1",
+      "median() is O(1): top of the bigger heap, or average of both tops when equal size",
+      "Feed in [5, 15, 1, 3, 8, 7, 9, 10, 20, 6] and print the median after every add",
+      "Every add() must be O(log n) — no sorting the whole list",
+      "Include an assert-based check against sorted-list medians for the same input",
+    ],
+    expectedOutput: "Ten lines like 'add(5) -> median 5', 'add(15) -> median 10.0', ..., and a final 'all asserts passed'.",
+    hints: [
+      "Invariant: every element of the lower max-heap <= every element of the upper min-heap.",
+      "Push to the lower heap first, then move its max to the upper heap, then rebalance sizes if upper got bigger than lower.",
+      "Lower heap stores negatives: its true max is -lower[0].",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-bst": {
+    title: "Validate & Balance a BST",
+    task: "Add two methods to the lesson's BST class: is_valid() that verifies the BST property using the in-order-is-sorted rule, and a standalone build_balanced(sorted_values) that constructs a height-optimal BST from a sorted list using recursion (middle element becomes the root).",
+    requirements: [
+      "is_valid() returns True for trees built with insert(), False for a manually corrupted tree",
+      "Corrupt a tree on purpose (e.g. tree.root.left.value = 999) and show is_valid() catches it",
+      "build_balanced([1..15]) produces a tree of height 4 (the minimum for 15 nodes)",
+      "Compare: inserting 1..15 in ascending order gives height 15 — print both heights",
+      "build_balanced recursion: middle element is the root, left half builds the left subtree, right half the right",
+      "Verify build_balanced output with is_valid() and in_order()",
+    ],
+    expectedOutput: "is_valid: True for a normal tree, False after corruption. Heights printed: skewed=15, balanced=4. In-order of the balanced tree is 1..15.",
+    hints: [
+      "is_valid via in-order: collect values, then check all(a < b for a, b in zip(vals, vals[1:])).",
+      "build_balanced(vals): if not vals: return None; mid = len(vals)//2; node = Node(vals[mid]); node.left = build_balanced(vals[:mid]); node.right = build_balanced(vals[mid+1:]).",
+      "This middle-first idea is exactly how you'd fix the skew trap from the lesson.",
+    ],
+    starterCode: null,
+  },
+
+  /* ── PDSA Advanced Visualizations ── */
+
+  "pdsa-viz-array": {
+    title: "Prove the Shift Cost",
+    task: "Use the Array visualizer to collect real data: perform inserts at index 0, at the middle, and at the end on arrays of different lengths, and write down the shift count each time. Then answer: what formula predicts the shifts?",
+    requirements: [
+      "Reset, then insert at index 0 — record shifts for lengths 5, 6, 7, 8 (insert 4 times)",
+      "Reset, insert at the middle index each time — record 4 shift counts",
+      "Reset, append 4 times — record shift counts",
+      "Write your three observations as HTML comments at the top of the file",
+      "State the formula: inserting at index i in an n-element array shifts how many elements?",
+      "Bonus: modify the preload line so Reset starts with 10 elements instead of 5",
+    ],
+    expectedOutput: "Comments in the file like <!-- front inserts: 5,6,7,8 shifts; middle: 2,3,3,4; append: 0,0,0,0; formula: n - i -->.",
+    hints: [
+      "The 'Total shifts' stat accumulates — use 'Last op cost' for per-operation numbers.",
+      "The preload is the doReset() function near the bottom of the script.",
+      "Formula check: inserting at i=0 with n=5 shifted 5; at i=n it shifted 0. So shifts = n - i.",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-viz-deque": {
+    title: "Deque as Stack AND Queue",
+    task: "Using only the four deque buttons, simulate (a) a stack session and (b) a queue session, and log which button pairs you used. Then modify the code to add a 'Mode' badge that displays STACK when you only ever use back operations, QUEUE when you use push-back + pop-front, and DEQUE otherwise.",
+    requirements: [
+      "Simulate a stack: 4 pushes and 2 pops using only back buttons — note the LIFO output order",
+      "Simulate a queue: 4 pushes back, 2 pops front — note the FIFO output order",
+      "Add a mode indicator element to the stats row",
+      "Track which operations have been used since the last Clear (e.g. a Set of op names)",
+      "Mode logic: only append/pop -> STACK; only append/popleft -> QUEUE; anything else -> DEQUE",
+      "Clear resets the mode tracking",
+    ],
+    expectedOutput: "After back-only operations the badge reads STACK; after back-push + front-pop it reads QUEUE; after mixing all four it reads DEQUE.",
+    hints: [
+      "Add a stat card: <div class='stat'><div class='lbl'>Mode</div><div class='val' id='mode'>-</div></div>.",
+      "Record ops: var used = {}; then used['append'] = true inside pushBack, etc.",
+      "Decide mode with Object.keys(used).sort().join(',') compared against 'append,pop' and 'append,popleft'.",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-viz-heap": {
+    title: "Best-Case vs Worst-Case Inserts",
+    task: "Use the Heap visualizer to measure sift-up swap counts experimentally, then extend the code with a 'Total swaps' counter and an 'Insert 5 random' button that inserts five random numbers in one click.",
+    requirements: [
+      "Reset, then insert 10, 20, 30, 40 (ascending) — record swaps per insert",
+      "Reset, then insert 40, 30, 20, 10 (descending) — record swaps per insert",
+      "Explain in an HTML comment which order is the worst case for a MIN-heap and why",
+      "Add a running 'Total swaps' stat card that accumulates lastSwaps across operations",
+      "Add an 'Insert 5 random' button (values 1-99) that logs each insert",
+      "Random inserts must go through the same doInsert path (or a helper) so swaps are logged",
+    ],
+    expectedOutput: "Descending inserts each cause swaps (new smallest bubbles to root every time); ascending cause zero. The new stat card and random button work.",
+    hints: [
+      "For a MIN-heap, inserting values in DESCENDING order... wait — try it! Each new smaller value must climb all the way up. Ascending values are already bigger than their parent, so 0 swaps.",
+      "Random value: Math.floor(Math.random()*99)+1.",
+      "Reuse the logic: write insertValue(v) containing the current doInsert body, then call it from both the button handlers.",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-viz-bst": {
+    title: "Build the Skew, Then Fix It",
+    task: "Use the BST visualizer to demonstrate the skew trap and its fix: build a worst-case tree, measure it, then find the insert order that produces a perfect tree — and add a 'Load skewed' demo button to the code.",
+    requirements: [
+      "Clear, insert 10, 20, 30, 40, 50 in order — screenshot-worthy chain; record height and search(50) visits",
+      "Clear, insert the same 5 values in an order that gives height 3 (middle-first)",
+      "Record search(50) visits in the balanced version and compare",
+      "Add a 'Load skewed' button next to 'Reset (balanced)' that clears and inserts 10..50 ascending",
+      "Write the two heights and two visit counts as an HTML comment",
+      "Bonus: make search also report visits as a percentage of node count",
+    ],
+    expectedOutput: "Skewed: height 5, search(50) = 5 visits. Balanced (e.g. 30,10,20,40,50 or 30,20,10,40,50): height ~3, search(50) = 2-3 visits. New button works.",
+    hints: [
+      "Middle-first order for 10..50: 30 first, then 20 and 40, then 10 and 50.",
+      "Copy doReset() as doSkew() and change the array to [10,20,30,40,50].",
+      "Percentage: Math.round(visits/count*100) + '%' appended to the log line.",
+    ],
+    starterCode: null,
+  },
+
+  /* ── PDSA Build-It-Yourself Lab ── */
+
+  "pdsa-lab-bootstrap": {
+    title: "Complete the Visualizer — Then Make It Yours",
+    task: "Finish all four stages of the Bootstrap stack visualizer lab (render, buttons, stats, alert + log). Then upgrade it into a QUEUE visualizer with a mode toggle: a Bootstrap button-group that switches between Stack and Queue behaviour.",
+    requirements: [
+      "All four lab stages complete: badges render top-first, buttons work, stats update, empty-pop shows a dismissible Bootstrap alert",
+      "Operation log implemented with list-group items (newest first), capped at 10 entries",
+      "A btn-group with two buttons: 'Stack (LIFO)' and 'Queue (FIFO)' toggling an active class",
+      "In Queue mode, remove takes from the FRONT (shift) instead of the top (pop)",
+      "The top/front badge is highlighted with text-bg-success and labelled TOP or FRONT per mode",
+      "Only Bootstrap classes — no custom <style> block",
+    ],
+    expectedOutput: "A working visualizer where the same data behaves as LIFO or FIFO depending on the toggle, with stats, alerts, and a capped operation log.",
+    hints: [
+      "Button group: <div class='btn-group'><button class='btn btn-outline-primary active'>Stack</button><button class='btn btn-outline-primary'>Queue</button></div>.",
+      "One remove function: mode === 'stack' ? stack.pop() : stack.shift().",
+      "Cap the log: while (log.children.length > 10) log.removeChild(log.lastChild).",
+    ],
+    starterCode: null,
+  },
+
+  "pdsa-lab-flask": {
+    title: "Ship the Priority Queue API + One More Resource",
+    task: "Implement the three /queue endpoints so the whole test suite passes, then design and add a third resource: a /history endpoint pair backed by a deque(maxlen=5) that records every operation performed on the stack and queue.",
+    requirements: [
+      "All provided tests print PASS, including the 400 on empty queue",
+      "POST /history/log appends {'op': ...} entries into a deque with maxlen=5",
+      "GET /history returns the entries oldest-first and proves maxlen by logging 7 ops and getting only 5 back",
+      "Stack and queue handlers call the history logger internally (one line each)",
+      "Peek must NOT modify the heap — add a test proving two consecutive peeks return the same task",
+      "Write 3 new check(...) tests for the history endpoints",
+    ],
+    expectedOutput: "Full test output: 3 stack PASSes, 8 queue PASSes (including your peek-twice test), and 3 history PASSes showing only the last 5 of 7 ops survive.",
+    hints: [
+      "heappop returns the (priority, task) tuple — unpack it: prio, task = heapq.heappop(pq).",
+      "Peek: prio, task = pq[0] — indexing doesn't remove.",
+      "History: from collections import deque; history = deque(maxlen=5); jsonify({'ops': list(history)}).",
+    ],
+    starterCode: null,
+  },
 };
