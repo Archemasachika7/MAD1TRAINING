@@ -3,10 +3,80 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Interactive Learning Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>CodeArena - Competitive Learning Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg-primary: #0a0c10;
+        --bg-secondary: #11141a;
+        --bg-tertiary: #1a1f29;
+        --border-color: #2a3140;
+        --accent-cyan: #00d9ff;
+        --accent-purple: #a855f7;
+        --accent-green: #22c55e;
+        --accent-orange: #f97316;
+        --text-primary: #f0f4f8;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+      }
+      
+      * {
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      
+      /* Animated gradient background */
+      .arena-bg {
+        background: 
+          radial-gradient(ellipse at top, rgba(0, 217, 255, 0.08) 0%, transparent 50%),
+          radial-gradient(ellipse at bottom right, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+          linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+      }
+      
+      /* Glowing borders */
+      .glow-border {
+        position: relative;
+      }
+      .glow-border::before {
+        content: '';
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(0, 217, 255, 0.3), transparent, rgba(168, 85, 247, 0.3));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+      
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #3a4255;
+      }
+      
+      /* Code editor glow */
+      .editor-glow {
+        box-shadow: 0 0 40px rgba(0, 217, 255, 0.05);
+      }
+    </style>
   </head>
-  <body class="bg-[#0d1117] text-gray-200 antialiased">
+  <body class="arena-bg text-gray-200 antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
